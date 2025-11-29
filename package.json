@@ -17,12 +17,10 @@
     "@sveltejs/kit": "^2.12.2",
     "@sveltejs/vite-plugin-svelte": "^5.0.4",
     "@types/pg": "^8.11.10",
-    "dotenv": "^17.2.3",
     "sharp": "^0.34.5",
     "svelte": "^5.15.1",
     "svelte-check": "^4.0.9",
     "tslib": "^2.8.1",
-    "tsx": "^4.20.6",
     "typescript": "^5.7.2",
     "vite": "^6.0.3",
     "wrangler": "^4.51.0"
@@ -31,7 +29,9 @@
     "@aws-sdk/client-s3": "^3.705.0",
     "@aws-sdk/s3-request-presigner": "^3.705.0",
     "bcryptjs": "^3.0.3",
+    "dotenv": "^17.2.3",
     "pg": "^8.13.1",
+    "tsx": "^4.20.6",
     "zod": "^3.23.8"
   },
   "type": "module",

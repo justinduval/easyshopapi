@@ -8,3 +8,14 @@ node_modules
 !.env.example
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Python venv
+venv/
+
+# Source images (already processed)
+a_integrer/photos-batteries/
+a_integrer/photos-lubrifiants/
+a_integrer/photos-pneus/
+
+# Processed webp images (uploaded to R2)
+static/products/
