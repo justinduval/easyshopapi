@@ -1,0 +1,17 @@
+{
+  "total_products": 86,
+  "scraped_at": "2025-11-23T18:28:45.148Z",
+  "source": "https://coi.re/catalogue/produits",
+  "category_id": 5,
+  "pages": 6,
+  "sample_product": {
+    "slug": "12070-15-pn-moto-mitas-touring-force-sc-tl-56s",
+    "name": "120/70-15 PN MOTO MITAS TOURING FORCE SC TL 56S",
+    "reference": "A0028584",
+    "supplier_reference": "MIT70000649",
+    "price": 53.1,
+    "stock": 21,
+    "image": "https://coi.re/glide/s3/attachments/5m3/1x4/7vu/5m31x47vuhbd561wi0q2eqckg.png?w=242&h=114&fit=crop&fm=webp&q=95&s=96eab64d52a48229f790ad65f0dd706f",
+    "source_url": "https://coi.re/produits/12070-15-pn-moto-mitas-touring-force-sc-tl-56s"
+  }
+}

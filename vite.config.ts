@@ -4,6 +4,6 @@ import { defineConfig } from 'vite';
 export default defineConfig({
 	plugins: [sveltekit()],
 	server: {
-		allowedHosts: ['front.tamponwebconception.fr']
+		allowedHosts: ['front.tamponwebconception.fr', 'astro.tamponwebconception.fr']
 	}
 });

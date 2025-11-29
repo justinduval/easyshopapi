@@ -1,0 +1,18 @@
+{
+  "total_products": 104,
+  "scraped_at": "2025-11-23T18:35:18.301Z",
+  "source": "https://coi.re/catalogue/produits",
+  "category_id": "10",
+  "category_name": "lubrifiants",
+  "sample_product": {
+    "slug": "huile-cross-power-4t-sae-10w60-1l-jaso-ma2-motorex",
+    "name": "HUILE CROSS POWER 4T SAE 10W60 1L JASO MA2 MOTOREX",
+    "reference": "A0028714",
+    "supplier_reference": "MOT308242",
+    "price": 13.75,
+    "stock": 50,
+    "image": "https://coi.re/glide/s3/attachments/5m3/1x4/7vu/5m31x47vuhbd561wi0q2eqckg.png?w=242&h=114&fit=crop&fm=webp&q=95&s=96eab64d52a48229f790ad65f0dd706f",
+    "source_url": "https://coi.re/produits/huile-cross-power-4t-sae-10w60-1l-jaso-ma2-motorex",
+    "category_id": "10"
+  }
+}

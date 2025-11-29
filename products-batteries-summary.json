@@ -1,0 +1,18 @@
+{
+  "total_products": 55,
+  "scraped_at": "2025-11-23T18:37:00.538Z",
+  "source": "https://coi.re/catalogue/produits",
+  "category_id": "15",
+  "category_name": "batteries",
+  "sample_product": {
+    "slug": "bat-moto-10la2-lb10l-a2-dry-landport",
+    "name": "BAT MOTO 10LA2 LB10L-A2 DRY LANDPORT",
+    "reference": "A0028806",
+    "supplier_reference": "LANMDLB10LA2",
+    "price": 31.15,
+    "stock": 12,
+    "image": "https://coi.re/glide/s3/attachments/5m3/1x4/7vu/5m31x47vuhbd561wi0q2eqckg.png?w=242&h=114&fit=crop&fm=webp&q=95&s=96eab64d52a48229f790ad65f0dd706f",
+    "source_url": "https://coi.re/produits/bat-moto-10la2-lb10l-a2-dry-landport",
+    "category_id": "15"
+  }
+}

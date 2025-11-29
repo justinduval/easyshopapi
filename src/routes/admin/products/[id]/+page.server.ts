@@ -1,4 +1,4 @@
-import { error, fail, redirect } from '@sveltejs/kit';
+import { error, fail, redirect, isRedirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { getAllCategories } from '$lib/server/api/categories';
 import {
@@ -76,14 +76,14 @@ export const actions = {
 
 			// Redirect to product list
 			throw redirect(303, '/admin/products');
-		} catch (error: any) {
-			if (error instanceof Response) {
-				throw error;
+		} catch (err: any) {
+			if (isRedirect(err)) {
+				throw err;
 			}
 
-			console.error('Update product error:', error);
+			console.error('Update product error:', err);
 			return fail(500, {
-				error: error.message || 'Erreur lors de la mise à jour du produit'
+				error: err.message || 'Erreur lors de la mise à jour du produit'
 			});
 		}
 	},

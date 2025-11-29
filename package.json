@@ -8,8 +8,9 @@
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-    "db:migrate": "node --loader ts-node/esm src/lib/server/db/migrate.ts",
-    "db:seed": "node --loader ts-node/esm src/lib/server/db/seed.ts"
+    "db:migrate": "tsx src/lib/server/db/migrate.ts",
+    "db:seed": "tsx src/lib/server/db/seed.ts",
+    "import:products": "tsx scripts/import-products.ts"
   },
   "devDependencies": {
     "@sveltejs/adapter-node": "^5.2.9",
@@ -17,12 +18,14 @@
     "@sveltejs/vite-plugin-svelte": "^5.0.4",
     "@types/bcrypt": "^5.0.2",
     "@types/pg": "^8.11.10",
+    "dotenv": "^17.2.3",
     "svelte": "^5.15.1",
     "svelte-check": "^4.0.9",
     "tslib": "^2.8.1",
     "tsx": "^4.20.6",
     "typescript": "^5.7.2",
-    "vite": "^6.0.3"
+    "vite": "^6.0.3",
+    "wrangler": "^4.51.0"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.705.0",
