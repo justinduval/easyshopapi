@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { query } from '../db';
 import type { RequestEvent } from '@sveltejs/kit';
 

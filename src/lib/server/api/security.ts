@@ -1,6 +1,6 @@
 import { error, json } from '@sveltejs/kit';
 import type { RequestEvent } from '@sveltejs/kit';
-import { API_SECRET_KEY, ALLOWED_ORIGIN } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 
 // Simple in-memory rate limiter
 const rateLimits = new Map<string, { count: number; resetTime: number }>();
@@ -8,7 +8,7 @@ const rateLimits = new Map<string, { count: number; resetTime: number }>();
 export function verifyApiKey(event: RequestEvent) {
 	const apiKey = event.request.headers.get('X-API-Key');
 
-	if (!apiKey || apiKey !== API_SECRET_KEY) {
+	if (!apiKey || apiKey !== env.API_SECRET_KEY) {
 		throw error(401, 'Unauthorized: Invalid API Key');
 	}
 }
@@ -41,7 +41,7 @@ export function handleCors(event: RequestEvent) {
 		'Access-Control-Allow-Headers': 'Content-Type, X-API-Key'
 	};
 
-	if (origin === ALLOWED_ORIGIN) {
+	if (origin === env.ALLOWED_ORIGIN) {
 		headers['Access-Control-Allow-Origin'] = origin;
 	}
 

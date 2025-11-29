@@ -1,10 +1,10 @@
 import pg from 'pg';
-import { DATABASE_URL } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 
 const { Pool } = pg;
 
 export const pool = new Pool({
-	connectionString: DATABASE_URL,
+	connectionString: env.DATABASE_URL,
 	max: 20,
 	idleTimeoutMillis: 30000,
 	connectionTimeoutMillis: 2000,
