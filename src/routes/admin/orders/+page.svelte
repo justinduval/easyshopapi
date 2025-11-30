@@ -233,25 +233,25 @@
 								<Icon name={expandedOrderId === order.id ? 'arrow-right' : 'arrow-right'} size={16} />
 							</button>
 						</td>
-						<td>
+						<td data-label="Commande">
 							<strong class="order-number">{order.order_number}</strong>
 						</td>
-						<td>
+						<td data-label="Client">
 							<div class="customer-info">
 								<div class="customer-name">{order.customer_name}</div>
 								<div class="customer-email">{order.customer_email}</div>
 							</div>
 						</td>
-						<td>
+						<td data-label="Date">
 							<span class="date">{formatDateTime(order.created_at)}</span>
 						</td>
-						<td>
+						<td data-label="Articles">
 							<span class="items-count">{order.items_count || 0}</span>
 						</td>
-						<td>
+						<td data-label="Total">
 							<strong class="total">{formatCurrency(order.total_ttc)}</strong>
 						</td>
-						<td>
+						<td data-label="Paiement">
 							<div class="payment-info">
 								<span class="badge badge-{getPaymentStatusColor(order.payment_status)}">
 									{getPaymentStatusLabel(order.payment_status)}
@@ -259,7 +259,7 @@
 								<small class="payment-method">{getPaymentMethodLabel(order.payment_method)}</small>
 							</div>
 						</td>
-						<td>
+						<td data-label="Statut">
 							<span class="badge badge-{getStatusColor(order.order_status)}">
 								{getStatusLabel(order.order_status)}
 							</span>
@@ -892,6 +892,259 @@
 	@media (max-width: 968px) {
 		.details-grid {
 			grid-template-columns: 1fr;
+		}
+	}
+
+	/* ===== RESPONSIVE MOBILE ===== */
+	@media (max-width: 768px) {
+		.page-header {
+			flex-direction: column;
+			align-items: stretch;
+			gap: var(--space-md);
+		}
+
+		h1 {
+			font-size: 1.5rem;
+		}
+
+		.page-stats {
+			justify-content: flex-start;
+		}
+
+		.filters-card {
+			padding: var(--space-md);
+		}
+
+		.filters-grid {
+			grid-template-columns: 1fr;
+			gap: var(--space-sm);
+		}
+
+		.filters-actions {
+			flex-direction: column;
+		}
+
+		.filters-actions button {
+			width: 100%;
+		}
+
+		/* Table → Cards */
+		.orders-table {
+			background: transparent;
+			border: none;
+		}
+
+		table, thead, tbody, tr, th, td {
+			display: block;
+		}
+
+		thead {
+			display: none;
+		}
+
+		tbody {
+			display: flex;
+			flex-direction: column;
+			gap: var(--space-md);
+		}
+
+		tr {
+			background: var(--color-bg-secondary);
+			border: 1px solid var(--color-border-subtle);
+			border-radius: var(--radius-lg);
+			padding: var(--space-md);
+			position: relative;
+		}
+
+		tr:hover td {
+			background: transparent;
+		}
+
+		tr.expanded {
+			border-color: var(--color-accent-primary);
+		}
+
+		td {
+			padding: var(--space-xs) 0;
+			border: none;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		td::before {
+			content: attr(data-label);
+			font-weight: 600;
+			font-size: 0.75rem;
+			color: var(--color-text-tertiary);
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
+			flex-shrink: 0;
+			margin-right: var(--space-md);
+		}
+
+		/* Hide expand button cell label */
+		td:first-child {
+			position: absolute;
+			top: var(--space-md);
+			right: var(--space-md);
+			padding: 0;
+		}
+
+		td:first-child::before {
+			display: none;
+		}
+
+		/* Order number - make it prominent */
+		td:nth-child(2) {
+			padding-top: 0;
+			padding-bottom: var(--space-sm);
+			border-bottom: 1px solid var(--color-border-subtle);
+			margin-bottom: var(--space-sm);
+		}
+
+		td:nth-child(2)::before {
+			display: none;
+		}
+
+		.order-number {
+			font-size: 1.1rem;
+		}
+
+		/* Customer info */
+		.customer-info {
+			text-align: right;
+		}
+
+		.customer-email {
+			font-size: 0.8rem;
+		}
+
+		/* Actions at bottom */
+		td.actions {
+			padding-top: var(--space-md);
+			margin-top: var(--space-sm);
+			border-top: 1px solid var(--color-border-subtle);
+			justify-content: flex-end;
+		}
+
+		td.actions::before {
+			display: none;
+		}
+
+		.actions {
+			width: 100%;
+			justify-content: flex-end;
+		}
+
+		.status-select {
+			flex: 1;
+			max-width: 150px;
+		}
+
+		.delete-confirm {
+			flex-wrap: wrap;
+			justify-content: flex-end;
+		}
+
+		/* Details row */
+		.details-row {
+			margin-top: calc(-1 * var(--space-md));
+			border-top: none;
+			border-top-left-radius: 0;
+			border-top-right-radius: 0;
+		}
+
+		.details-row td {
+			display: block;
+		}
+
+		.details-row td::before {
+			display: none;
+		}
+
+		.order-details {
+			padding: var(--space-md);
+		}
+
+		.details-grid {
+			gap: var(--space-lg);
+		}
+
+		.detail-section h3 {
+			font-size: 0.9rem;
+		}
+
+		.detail-section dt {
+			font-size: 0.8rem;
+		}
+
+		.detail-section dd {
+			font-size: 0.9rem;
+		}
+
+		.items-note {
+			font-size: 0.8rem;
+			padding: var(--space-sm);
+		}
+
+		/* Pagination */
+		.pagination {
+			flex-direction: column;
+			gap: var(--space-md);
+			padding: var(--space-md);
+		}
+
+		.pagination-info {
+			order: -1;
+			text-align: center;
+		}
+
+		.pagination button {
+			width: 100%;
+		}
+	}
+
+	@media (max-width: 480px) {
+		h1 {
+			font-size: 1.25rem;
+		}
+
+		.stat-badge {
+			font-size: 0.8rem;
+			padding: var(--space-xs) var(--space-sm);
+		}
+
+		tr {
+			padding: var(--space-sm);
+		}
+
+		.order-number {
+			font-size: 1rem;
+		}
+
+		.badge {
+			font-size: 0.7rem;
+			padding: 2px var(--space-xs);
+		}
+
+		.total {
+			font-size: 0.95rem;
+		}
+
+		.btn-sm {
+			padding: var(--space-xs) var(--space-sm);
+			font-size: 0.8rem;
+		}
+
+		.status-select {
+			font-size: 0.8rem;
+			padding: var(--space-xs);
+		}
+
+		.detail-section code {
+			font-size: 0.75rem;
+			word-break: break-all;
 		}
 	}
 </style>

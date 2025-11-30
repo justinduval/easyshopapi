@@ -445,5 +445,84 @@
 		.page-title {
 			font-size: 1.5rem;
 		}
+
+		.header {
+			padding: var(--space-md) var(--space-lg);
+		}
+	}
+
+	/* Very small screens */
+	@media (max-width: 480px) {
+		.sidebar {
+			width: 100%;
+		}
+
+		.sidebar-header {
+			padding: var(--space-md);
+		}
+
+		.brand-logo {
+			height: 32px;
+		}
+
+		.brand-name {
+			font-size: 1.1rem;
+		}
+
+		.brand-by {
+			font-size: 0.65rem;
+		}
+
+		.sidebar-nav {
+			padding: var(--space-md) 0;
+		}
+
+		.nav-item {
+			padding: var(--space-sm) var(--space-lg);
+			margin: 0 var(--space-sm);
+		}
+
+		.nav-label {
+			font-size: 0.9rem;
+		}
+
+		.sidebar-footer {
+			padding: var(--space-md) var(--space-lg);
+		}
+
+		.user-card {
+			padding: var(--space-sm);
+		}
+
+		.user-avatar {
+			width: 36px;
+			height: 36px;
+			font-size: 1rem;
+		}
+
+		.user-name {
+			font-size: 0.85rem;
+		}
+
+		.user-email {
+			font-size: 0.75rem;
+		}
+
+		.logout-btn {
+			padding: var(--space-sm);
+			font-size: 0.85rem;
+		}
+
+		.header {
+			padding: var(--space-sm) var(--space-md);
+		}
+
+		.page-title {
+			font-size: 1.25rem;
+		}
+
+		.content {
+			padding: var(--space-sm);
+		}
 	}
 </style>

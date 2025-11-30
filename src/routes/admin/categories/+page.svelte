@@ -87,10 +87,10 @@
 			<tbody>
 				{#each data.categories as category}
 					<tr>
-						<td><strong>{category.name}</strong></td>
-						<td><code>{category.slug}</code></td>
-						<td>{category.description || '—'}</td>
-						<td>{category.product_count || 0}</td>
+						<td data-label="Nom"><strong>{category.name}</strong></td>
+						<td data-label="Slug"><code>{category.slug}</code></td>
+						<td data-label="Description">{category.description || '—'}</td>
+						<td data-label="Produits">{category.product_count || 0}</td>
 						<td class="actions">
 							<button class="btn-sm btn-edit" onclick={() => openEditModal(category)}>
 								Modifier
@@ -547,5 +547,168 @@
 		margin-top: var(--space-xl);
 		padding-top: var(--space-md);
 		border-top: 1px solid var(--color-border-subtle);
+	}
+
+	/* ===== RESPONSIVE MOBILE ===== */
+	@media (max-width: 768px) {
+		.page-header {
+			flex-direction: column;
+			align-items: stretch;
+			gap: var(--space-md);
+		}
+
+		h1 {
+			font-size: 1.5rem;
+		}
+
+		.btn-primary {
+			text-align: center;
+			justify-content: center;
+		}
+
+		/* Table → Cards */
+		.categories-table {
+			background: transparent;
+			border: none;
+		}
+
+		table, thead, tbody, tr, th, td {
+			display: block;
+		}
+
+		thead {
+			display: none;
+		}
+
+		tbody {
+			display: flex;
+			flex-direction: column;
+			gap: var(--space-md);
+		}
+
+		tr {
+			background: var(--color-bg-secondary);
+			border: 1px solid var(--color-border-subtle);
+			border-radius: var(--radius-lg);
+			padding: var(--space-md);
+		}
+
+		tr:hover td {
+			background: transparent;
+		}
+
+		td {
+			padding: var(--space-xs) 0;
+			border: none;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		td::before {
+			content: attr(data-label);
+			font-weight: 600;
+			font-size: 0.8rem;
+			color: var(--color-text-tertiary);
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
+		}
+
+		td:first-child {
+			padding-top: 0;
+		}
+
+		td:last-child {
+			padding-top: var(--space-md);
+			margin-top: var(--space-sm);
+			border-top: 1px solid var(--color-border-subtle);
+		}
+
+		td:last-child::before {
+			display: none;
+		}
+
+		.actions {
+			width: 100%;
+			justify-content: flex-end;
+		}
+
+		.delete-confirm {
+			flex-wrap: wrap;
+			justify-content: flex-end;
+		}
+
+		code {
+			font-size: 0.8em;
+		}
+
+		/* Modal */
+		.modal {
+			width: 95%;
+			max-height: 90vh;
+			overflow-y: auto;
+		}
+
+		.modal-header {
+			padding: var(--space-lg);
+		}
+
+		.modal-header h2 {
+			font-size: 1.25rem;
+		}
+
+		.modal form {
+			padding: var(--space-lg);
+		}
+
+		.modal-actions {
+			flex-direction: column;
+		}
+
+		.modal-actions button {
+			width: 100%;
+			justify-content: center;
+		}
+	}
+
+	@media (max-width: 480px) {
+		h1 {
+			font-size: 1.25rem;
+		}
+
+		.btn-sm {
+			padding: var(--space-xs) var(--space-sm);
+			font-size: 0.8rem;
+		}
+
+		.actions {
+			flex-wrap: wrap;
+			gap: var(--space-xs);
+		}
+
+		.delete-confirm span {
+			font-size: 0.75rem;
+		}
+
+		.modal {
+			width: 100%;
+			height: 100%;
+			max-height: 100%;
+			border-radius: 0;
+			top: 0;
+			left: 0;
+			transform: none;
+		}
+
+		@keyframes slideDown {
+			from {
+				opacity: 0;
+				transform: translateY(-20px);
+			}
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
 	}
 </style>

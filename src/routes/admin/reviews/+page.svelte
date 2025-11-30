@@ -180,7 +180,7 @@
 			<tbody>
 				{#each data.reviews as review}
 					<tr>
-						<td>
+						<td data-label="Produit">
 							<div class="product-info">
 								{#if review.product_image}
 									<img src={review.product_image} alt={review.product_name} class="product-thumb" />
@@ -197,16 +197,16 @@
 								</div>
 							</div>
 						</td>
-						<td>
+						<td data-label="Client">
 							<div class="customer-info">
 								<div class="customer-name">{review.customer_name}</div>
 								<div class="customer-email">{review.customer_email}</div>
 							</div>
 						</td>
-						<td>
+						<td data-label="Note">
 							<StarRating rating={review.rating} size={18} />
 						</td>
-						<td>
+						<td data-label="Commentaire">
 							<div class="comment-preview">
 								{truncateText(review.comment, 100)}
 							</div>
@@ -217,12 +217,12 @@
 								</div>
 							{/if}
 						</td>
-						<td>
+						<td data-label="Statut">
 							<span class="badge badge-{getStatusColor(review.status)}">
 								{getStatusLabel(review.status)}
 							</span>
 						</td>
-						<td>
+						<td data-label="Date">
 							<span class="date">{formatDateTime(review.created_at)}</span>
 						</td>
 						<td class="actions">
@@ -970,6 +970,287 @@
 		.actions {
 			flex-direction: column;
 			align-items: stretch;
+		}
+	}
+
+	/* ===== RESPONSIVE MOBILE ===== */
+	@media (max-width: 768px) {
+		.page-header {
+			flex-direction: column;
+			align-items: stretch;
+			gap: var(--space-md);
+		}
+
+		h1 {
+			font-size: 1.5rem;
+		}
+
+		.page-stats {
+			justify-content: flex-start;
+		}
+
+		.filters-card {
+			padding: var(--space-md);
+		}
+
+		.filters-actions {
+			flex-direction: column;
+		}
+
+		.filters-actions button {
+			width: 100%;
+		}
+
+		/* Table → Cards */
+		.reviews-table {
+			background: transparent;
+			border: none;
+		}
+
+		table, thead, tbody, tr, th, td {
+			display: block;
+		}
+
+		thead {
+			display: none;
+		}
+
+		tbody {
+			display: flex;
+			flex-direction: column;
+			gap: var(--space-md);
+		}
+
+		tr {
+			background: var(--color-bg-secondary);
+			border: 1px solid var(--color-border-subtle);
+			border-radius: var(--radius-lg);
+			padding: var(--space-md);
+		}
+
+		tr:hover td {
+			background: transparent;
+		}
+
+		td {
+			padding: var(--space-xs) 0;
+			border: none;
+		}
+
+		td::before {
+			content: attr(data-label);
+			display: block;
+			font-weight: 600;
+			font-size: 0.75rem;
+			color: var(--color-text-tertiary);
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
+			margin-bottom: var(--space-xs);
+		}
+
+		/* Product info - first cell, more prominent */
+		td:first-child {
+			padding-bottom: var(--space-sm);
+			border-bottom: 1px solid var(--color-border-subtle);
+			margin-bottom: var(--space-sm);
+		}
+
+		td:first-child::before {
+			display: none;
+		}
+
+		.product-info {
+			flex-direction: row;
+			align-items: center;
+		}
+
+		.product-thumb,
+		.product-thumb-placeholder {
+			width: 40px;
+			height: 40px;
+		}
+
+		.product-name {
+			font-size: 0.95rem;
+		}
+
+		/* Actions at bottom */
+		td.actions {
+			padding-top: var(--space-md);
+			margin-top: var(--space-sm);
+			border-top: 1px solid var(--color-border-subtle);
+		}
+
+		td.actions::before {
+			display: none;
+		}
+
+		.actions {
+			flex-direction: row;
+			flex-wrap: wrap;
+			gap: var(--space-xs);
+		}
+
+		.actions button,
+		.actions form {
+			flex: 1;
+			min-width: calc(50% - var(--space-xs));
+		}
+
+		.actions .btn-sm {
+			width: 100%;
+			justify-content: center;
+			text-align: center;
+		}
+
+		.delete-confirm {
+			width: 100%;
+			justify-content: flex-end;
+		}
+
+		/* Customer info inline */
+		.customer-info {
+			flex-direction: row;
+			gap: var(--space-md);
+			align-items: center;
+		}
+
+		.customer-email {
+			font-size: 0.8rem;
+		}
+
+		/* Comment truncation */
+		.comment-preview {
+			font-size: 0.9rem;
+		}
+
+		/* Modal */
+		.modal {
+			width: 95%;
+			max-height: 95vh;
+		}
+
+		.modal-header {
+			padding: var(--space-lg);
+		}
+
+		.modal-header h2 {
+			font-size: 1.25rem;
+		}
+
+		.modal-body {
+			padding: var(--space-lg);
+		}
+
+		.review-details {
+			padding: var(--space-md);
+		}
+
+		.review-header {
+			flex-direction: column;
+			gap: var(--space-sm);
+		}
+
+		.modal-actions {
+			flex-direction: column;
+		}
+
+		.modal-actions button {
+			width: 100%;
+		}
+
+		/* Pagination */
+		.pagination {
+			flex-direction: column;
+			gap: var(--space-md);
+			padding: var(--space-md);
+		}
+
+		.pagination-info {
+			order: -1;
+			text-align: center;
+		}
+
+		.pagination button {
+			width: 100%;
+		}
+	}
+
+	@media (max-width: 480px) {
+		h1 {
+			font-size: 1.25rem;
+		}
+
+		.stat-badge {
+			font-size: 0.8rem;
+			padding: var(--space-xs) var(--space-sm);
+		}
+
+		tr {
+			padding: var(--space-sm);
+		}
+
+		.product-thumb,
+		.product-thumb-placeholder {
+			width: 36px;
+			height: 36px;
+		}
+
+		.product-name {
+			font-size: 0.9rem;
+		}
+
+		.product-link {
+			font-size: 0.8rem;
+		}
+
+		.badge {
+			font-size: 0.7rem;
+			padding: 2px var(--space-xs);
+		}
+
+		.date {
+			font-size: 0.8rem;
+		}
+
+		.btn-sm {
+			padding: var(--space-xs) var(--space-sm);
+			font-size: 0.8rem;
+		}
+
+		.actions button,
+		.actions form {
+			min-width: 100%;
+		}
+
+		/* Full screen modal */
+		.modal {
+			width: 100%;
+			height: 100%;
+			max-height: 100%;
+			border-radius: 0;
+			top: 0;
+			left: 0;
+			transform: none;
+		}
+
+		@keyframes slideDown {
+			from {
+				opacity: 0;
+				transform: translateY(-20px);
+			}
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		.review-comment {
+			padding: var(--space-sm);
+		}
+
+		.form-group textarea {
+			font-size: 0.95rem;
 		}
 	}
 </style>

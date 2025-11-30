@@ -536,4 +536,63 @@
 			font-size: 1.75rem;
 		}
 	}
+
+	@media (max-width: 480px) {
+		.welcome-title {
+			font-size: 1.5rem;
+		}
+
+		.welcome-text {
+			font-size: 0.9rem;
+		}
+
+		.user-badge {
+			padding: var(--space-xs) var(--space-sm);
+			font-size: 0.8rem;
+		}
+
+		.stat-card {
+			padding: var(--space-md);
+		}
+
+		.stat-value {
+			font-size: 2rem;
+		}
+
+		.stat-label {
+			font-size: 0.8rem;
+		}
+
+		.stat-trend {
+			font-size: 0.75rem;
+		}
+
+		.section-header h2 {
+			font-size: 1.1rem;
+		}
+
+		.activity-item,
+		.task-item {
+			padding: var(--space-sm);
+		}
+
+		.activity-icon {
+			width: 32px;
+			height: 32px;
+		}
+
+		.activity-icon svg {
+			width: 14px;
+			height: 14px;
+		}
+
+		.activity-text,
+		.task-text {
+			font-size: 0.85rem;
+		}
+
+		.activity-time {
+			font-size: 0.7rem;
+		}
+	}
 </style>

@@ -102,7 +102,7 @@
 				<tbody>
 					{#each data.admins as admin}
 						<tr>
-							<td>
+							<td data-label="Nom">
 								<div class="user-cell">
 									<div class="user-avatar">
 										{admin.name?.charAt(0).toUpperCase() || 'A'}
@@ -110,15 +110,15 @@
 									<span>{admin.name}</span>
 								</div>
 							</td>
-							<td>{admin.email}</td>
-							<td>
+							<td data-label="Email">{admin.email}</td>
+							<td data-label="Type">
 								{#if admin.is_system}
 									<span class="badge badge-system">Système</span>
 								{:else}
 									<span class="badge badge-normal">Standard</span>
 								{/if}
 							</td>
-							<td>
+							<td data-label="Créé le">
 								{new Date(admin.created_at).toLocaleDateString('fr-FR', {
 									day: '2-digit',
 									month: '2-digit',
@@ -417,10 +417,16 @@
 		font-weight: 500;
 	}
 
+	/* ===== RESPONSIVE MOBILE ===== */
 	@media (max-width: 768px) {
 		.page-header {
 			flex-direction: column;
 			align-items: stretch;
+			gap: var(--space-md);
+		}
+
+		.header-content h1 {
+			font-size: 1.5rem;
 		}
 
 		.form-grid {
@@ -433,6 +439,128 @@
 
 		.btn {
 			justify-content: center;
+		}
+
+		.card {
+			padding: var(--space-md);
+		}
+
+		.create-form h2 {
+			font-size: 1.1rem;
+		}
+
+		/* Table → Cards */
+		.table-container {
+			overflow: visible;
+		}
+
+		table, thead, tbody, tr, th, td {
+			display: block;
+		}
+
+		thead {
+			display: none;
+		}
+
+		tbody {
+			display: flex;
+			flex-direction: column;
+			gap: var(--space-md);
+		}
+
+		tr {
+			background: var(--color-bg-tertiary);
+			border: 1px solid var(--color-border-subtle);
+			border-radius: var(--radius-lg);
+			padding: var(--space-md);
+		}
+
+		tr:hover {
+			background: var(--color-bg-tertiary);
+		}
+
+		td {
+			padding: var(--space-xs) 0;
+			border: none;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		td::before {
+			content: attr(data-label);
+			font-weight: 600;
+			font-size: 0.75rem;
+			color: var(--color-text-tertiary);
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
+		}
+
+		/* First cell - user avatar and name */
+		td:first-child {
+			padding-bottom: var(--space-sm);
+			border-bottom: 1px solid var(--color-border-subtle);
+			margin-bottom: var(--space-sm);
+		}
+
+		td:first-child::before {
+			display: none;
+		}
+
+		.user-cell {
+			width: 100%;
+		}
+
+		/* Actions at bottom */
+		td:last-child {
+			padding-top: var(--space-md);
+			margin-top: var(--space-sm);
+			border-top: 1px solid var(--color-border-subtle);
+			justify-content: flex-end;
+		}
+
+		td:last-child::before {
+			display: none;
+		}
+
+		.delete-confirm {
+			flex-wrap: wrap;
+			justify-content: flex-end;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.header-content h1 {
+			font-size: 1.25rem;
+		}
+
+		.subtitle {
+			font-size: 0.85rem;
+		}
+
+		tr {
+			padding: var(--space-sm);
+		}
+
+		.user-avatar {
+			width: 32px;
+			height: 32px;
+			font-size: 0.85rem;
+		}
+
+		.badge {
+			font-size: 0.7rem;
+			padding: 2px var(--space-xs);
+		}
+
+		.btn-sm {
+			padding: var(--space-xs) var(--space-sm);
+			font-size: 0.8rem;
+		}
+
+		.form-group input {
+			padding: var(--space-sm);
+			font-size: 0.9rem;
 		}
 	}
 </style>
