@@ -48,7 +48,8 @@ export const GET: RequestHandler = async (event) => {
 			meta_description: product.meta_description,
 			category: {
 				id: product.category_id,
-				name: product.category_name
+				name: product.category_name,
+				slug: product.category_slug
 			},
 			reviews: reviewsResult.rows.map((r) => ({
 				id: r.id,

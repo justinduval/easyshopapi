@@ -51,7 +51,8 @@ export const GET: RequestHandler = async (event) => {
 				images: p.images,
 				category: {
 					id: p.category_id,
-					name: p.category_name
+					name: p.category_name,
+					slug: p.category_slug
 				}
 			})),
 			pagination: {

@@ -6,6 +6,7 @@ export interface Product {
 	id: string;
 	category_id: string;
 	category_name?: string;
+	category_slug?: string;
 	reference: string;
 	name: string;
 	slug: string;
@@ -56,7 +57,7 @@ export { generateProductSlug };
  */
 export async function getAllProducts(filters?: ProductFilters): Promise<Product[]> {
 	let queryText = `
-		SELECT p.*, c.name as category_name
+		SELECT p.*, c.name as category_name, c.slug as category_slug
 		FROM products p
 		LEFT JOIN categories c ON p.category_id = c.id
 		WHERE 1=1
@@ -99,7 +100,7 @@ export async function getAllProducts(filters?: ProductFilters): Promise<Product[
  */
 export async function getProductById(id: string): Promise<Product | null> {
 	const result = await query<Product>(
-		`SELECT p.*, c.name as category_name
+		`SELECT p.*, c.name as category_name, c.slug as category_slug
 		 FROM products p
 		 LEFT JOIN categories c ON p.category_id = c.id
 		 WHERE p.id = $1`,
@@ -114,7 +115,7 @@ export async function getProductById(id: string): Promise<Product | null> {
  */
 export async function getProductBySlug(slug: string): Promise<Product | null> {
 	const result = await query<Product>(
-		`SELECT p.*, c.name as category_name
+		`SELECT p.*, c.name as category_name, c.slug as category_slug
 		 FROM products p
 		 LEFT JOIN categories c ON p.category_id = c.id
 		 WHERE p.slug = $1`,
