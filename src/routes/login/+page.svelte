@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import type { ActionData } from './$types';
+	import type { ActionData, PageData } from './$types';
 
-	let { form }: { form: ActionData } = $props();
+	let { data, form }: { data: PageData; form: ActionData } = $props();
 
 	let loading = $state(false);
 </script>
 
 <svelte:head>
-	<title>Connexion - EasyShop Backoffice</title>
+	<title>Connexion {data.appName} - EasyShop by TWC</title>
 </svelte:head>
 
 <div class="login-container grain-overlay">
@@ -20,10 +20,9 @@
 				<div class="shape shape-2"></div>
 				<div class="shape shape-3"></div>
 			</div>
-			<h1 class="brand-title">
-				<span class="brand-accent">Easy</span><span class="brand-main">Shop</span>
-			</h1>
-			<p class="brand-subtitle">Backoffice Administration</p>
+			<img src="/twc-logo.svg" alt="TWC" class="brand-logo" />
+			<h1 class="brand-title">EasyShop</h1>
+			<p class="brand-subtitle">by Tampon Web Conception</p>
 			<div class="brand-divider"></div>
 			<p class="brand-description">Gérez votre boutique en ligne avec simplicité et élégance</p>
 		</div>
@@ -33,7 +32,7 @@
 	<div class="form-panel">
 		<div class="form-container">
 			<div class="form-header">
-				<h2>Connexion</h2>
+				<h2>Connexion {data.appName}</h2>
 				<p>Accédez à votre espace d'administration</p>
 			</div>
 
@@ -325,7 +324,7 @@
 		outline: none;
 		border-color: var(--color-accent-primary);
 		background: var(--color-bg-elevated);
-		box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+		box-shadow: 0 0 0 3px rgba(52, 0, 194, 0.1);
 	}
 
 	input:disabled {
@@ -356,7 +355,7 @@
 		width: 100%;
 		padding: var(--space-md) var(--space-xl);
 		background: linear-gradient(135deg, var(--color-accent-tertiary), var(--color-accent-primary));
-		color: var(--color-bg-primary);
+		color: white;
 		border: none;
 		border-radius: var(--radius-md);
 		font-size: 1rem;
@@ -369,11 +368,12 @@
 		transition: all var(--transition-base);
 		font-family: var(--font-body);
 		margin-top: var(--space-md);
-		box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+		box-shadow: var(--shadow-twc);
 	}
 
 	.submit-btn:hover:not(:disabled) {
-		box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
+		box-shadow: 0 6px 20px rgba(52, 0, 194, 0.25);
+		transform: translateY(-1px);
 	}
 
 	.submit-btn:disabled {

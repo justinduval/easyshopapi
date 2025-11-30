@@ -1,12 +1,18 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { verifyCredentials, setSessionCookie } from '$lib/server/auth';
-import type { Actions } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 import { z } from 'zod';
 
 const loginSchema = z.object({
 	email: z.string().email('Email invalide'),
 	password: z.string().min(1, 'Mot de passe requis')
 });
+
+export const load: PageServerLoad = async () => {
+	return {
+		appName: process.env.APP_NAME || 'EasyShop'
+	};
+};
 
 export const actions = {
 	login: async ({ request, cookies }) => {

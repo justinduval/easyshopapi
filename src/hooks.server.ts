@@ -1,6 +1,18 @@
-import { getSessionUser } from '$lib/server/auth';
+import { getSessionUser, ensureDefaultAdmin } from '$lib/server/auth';
 import type { Handle } from '@sveltejs/kit';
 import { redirect } from '@sveltejs/kit';
+
+// Initialize default admin on startup (only once)
+let adminInitialized = false;
+async function initDefaultAdmin() {
+	if (adminInitialized) return;
+	adminInitialized = true;
+	try {
+		await ensureDefaultAdmin();
+	} catch (error) {
+		console.error('[Hooks] Failed to ensure default admin:', error);
+	}
+}
 
 // Origines autorisées pour CORS
 const ALLOWED_ORIGINS = [
@@ -11,6 +23,9 @@ const ALLOWED_ORIGINS = [
 ];
 
 export const handle: Handle = async ({ event, resolve }) => {
+	// Ensure default admin exists on first request
+	await initDefaultAdmin();
+
 	const origin = event.request.headers.get('origin');
 	const isApiRoute = event.url.pathname.startsWith('/api');
 

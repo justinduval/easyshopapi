@@ -11,23 +11,28 @@
 		{ href: '/admin/products', label: 'Produits', icon: 'products' as const },
 		{ href: '/admin/categories', label: 'Catégories', icon: 'categories' as const },
 		{ href: '/admin/orders', label: 'Commandes', icon: 'orders' as const },
-		{ href: '/admin/reviews', label: 'Avis', icon: 'reviews' as const }
+		{ href: '/admin/reviews', label: 'Avis', icon: 'reviews' as const },
+		{ href: '/admin/users', label: 'Utilisateurs', icon: 'users' as const }
 	];
 
 	let mobileMenuOpen = $state(false);
 </script>
 
 <svelte:head>
-	<title>Admin - EasyShop</title>
+	<title>Admin - EasyShop by TWC</title>
 </svelte:head>
 
 <div class="admin-layout grain-overlay">
 	<!-- Sidebar -->
 	<aside class="sidebar" class:mobile-open={mobileMenuOpen}>
 		<div class="sidebar-header">
-			<h1 class="brand">
-				<span class="brand-accent">Easy</span><span class="brand-main">Shop</span>
-			</h1>
+			<a href="/admin/dashboard" class="brand-link">
+				<img src="/twc-logo.svg" alt="TWC" class="brand-logo" />
+				<div class="brand-text">
+					<span class="brand-name">EasyShop</span>
+					<span class="brand-by">by TWC</span>
+				</div>
+			</a>
 			<button
 				class="mobile-close"
 				onclick={() => (mobileMenuOpen = false)}
@@ -120,27 +125,45 @@
 	}
 
 	.sidebar-header {
-		padding: var(--space-xl);
+		padding: var(--space-lg);
 		border-bottom: 1px solid var(--color-border-subtle);
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 	}
 
-	.brand {
+	.brand-link {
+		display: flex;
+		align-items: center;
+		gap: var(--space-md);
+		text-decoration: none;
+	}
+
+	.brand-logo {
+		height: 40px;
+		width: auto;
+	}
+
+	.brand-text {
+		display: flex;
+		flex-direction: column;
+		line-height: 1.2;
+	}
+
+	.brand-name {
 		font-family: var(--font-display);
-		font-size: 2rem;
+		font-size: 1.25rem;
 		font-weight: 700;
-		margin: 0;
+		color: var(--color-text-primary);
 		letter-spacing: -0.02em;
 	}
 
-	.brand-accent {
+	.brand-by {
+		font-size: 0.7rem;
+		font-weight: 500;
 		color: var(--color-accent-primary);
-	}
-
-	.brand-main {
-		color: var(--color-text-primary);
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
 	}
 
 	.mobile-close {

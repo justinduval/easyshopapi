@@ -36,8 +36,20 @@ CREATE TABLE IF NOT EXISTS admin_users (
     email VARCHAR(255) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     name VARCHAR(255) NOT NULL,
+    is_system BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Add is_system column if not exists (for existing databases)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'admin_users' AND column_name = 'is_system'
+    ) THEN
+        ALTER TABLE admin_users ADD COLUMN is_system BOOLEAN DEFAULT FALSE;
+    END IF;
+END $$;
 
 -- Table: orders
 CREATE TABLE IF NOT EXISTS orders (
