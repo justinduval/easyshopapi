@@ -2,6 +2,7 @@ import { fail, redirect } from '@sveltejs/kit';
 import { verifyCredentials, setSessionCookie } from '$lib/server/auth';
 import type { Actions, PageServerLoad } from './$types';
 import { z } from 'zod';
+import { env } from '$env/dynamic/private';
 
 const loginSchema = z.object({
 	email: z.string().email('Email invalide'),
@@ -10,7 +11,7 @@ const loginSchema = z.object({
 
 export const load: PageServerLoad = async () => {
 	return {
-		appName: process.env.APP_NAME || 'EasyShop'
+		appName: env.APP_NAME || 'EasyShop'
 	};
 };
 

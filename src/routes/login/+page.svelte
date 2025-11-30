@@ -183,6 +183,15 @@
 		z-index: 1;
 		text-align: center;
 		animation: slideInLeft 0.8s ease-out;
+		max-width: 100%;
+		padding: 0 var(--space-lg);
+	}
+
+	.brand-logo {
+		width: 100%;
+		max-width: 180px;
+		height: auto;
+		margin-bottom: var(--space-lg);
 	}
 
 	@keyframes slideInLeft {
