@@ -78,18 +78,9 @@
 	<div class="welcome-section">
 		<div class="welcome-content">
 			<h1 class="welcome-title">
-				Bienvenue, <span class="user-name-gradient">{data.user?.name || 'Admin'}</span>
+				Bonjour, <span class="user-name-gradient">{data.user?.name || 'Admin'}</span>
 			</h1>
-			<p class="welcome-subtitle">Voici un apercu de votre boutique</p>
-		</div>
-		<div class="user-badge">
-			<div class="user-avatar-large">
-				{data.user?.name?.charAt(0).toUpperCase() || 'U'}
-			</div>
-			<div class="user-details">
-				<div class="user-name-large">{data.user?.name || 'Utilisateur'}</div>
-				<div class="user-email-small">{data.user?.email || 'user@example.com'}</div>
-			</div>
+			<p class="welcome-subtitle">Votre e-commerce en quelques chiffres</p>
 		</div>
 	</div>
 
@@ -102,7 +93,7 @@
 			<div class="stat-content">
 				<div class="stat-label">Produits</div>
 				<div class="stat-value">{data.stats.products}</div>
-				<div class="stat-sub">{data.stats.categories} categories</div>
+				<div class="stat-sub">{data.stats.categories} catégories</div>
 			</div>
 		</div>
 
@@ -124,7 +115,7 @@
 			<div class="stat-content">
 				<div class="stat-label">Revenus</div>
 				<div class="stat-value">{formatCurrency(data.stats.totalRevenue)}</div>
-				<div class="stat-sub">chiffre d'affaires</div>
+				<div class="stat-sub">CA</div>
 			</div>
 		</div>
 
@@ -219,7 +210,7 @@
 		<!-- Recent Activity -->
 		<div class="activity-card card">
 			<div class="card-header">
-				<h3>Activite recente</h3>
+				<h3>Activité récente</h3>
 				<span class="badge">En direct</span>
 			</div>
 			<div class="activity-list">
@@ -245,7 +236,7 @@
 				{:else}
 					<div class="activity-empty">
 						<Icon name="dashboard" size={32} />
-						<p>Aucune activite recente</p>
+						<p>Aucune activité récente</p>
 					</div>
 				{/if}
 			</div>

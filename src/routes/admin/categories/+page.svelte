@@ -358,7 +358,6 @@
 	.btn-edit,
 	.btn-sm {
 		padding: var(--space-sm) var(--space-md);
-		border: 1px solid transparent;
 		border-radius: var(--radius-md);
 		font-weight: 500;
 		cursor: pointer;

@@ -57,9 +57,14 @@ export { generateProductSlug };
  */
 export async function getAllProducts(filters?: ProductFilters): Promise<Product[]> {
 	let queryText = `
-		SELECT p.*, c.name as category_name, c.slug as category_slug
+		SELECT
+			p.*,
+			c.name as category_name,
+			c.slug as category_slug,
+			COALESCE(SUM(oi.quantity), 0) as total_sold
 		FROM products p
 		LEFT JOIN categories c ON p.category_id = c.id
+		LEFT JOIN order_items oi ON p.id = oi.product_id
 		WHERE 1=1
 	`;
 	const params: any[] = [];
@@ -89,7 +94,13 @@ export async function getAllProducts(filters?: ProductFilters): Promise<Product[
 		paramIndex++;
 	}
 
-	queryText += ` ORDER BY p.created_at DESC`;
+	queryText += `
+		GROUP BY p.id, c.name, c.slug
+		ORDER BY
+			CASE WHEN p.stock_status = 'out_of_stock' THEN 1 ELSE 0 END,
+			total_sold DESC,
+			p.created_at DESC
+	`;
 
 	const result = await query<Product>(queryText, params);
 	return result.rows;

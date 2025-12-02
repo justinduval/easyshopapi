@@ -243,7 +243,6 @@
 	.nav-indicator {
 		position: absolute;
 		left: 0;
-		top: 50%;
 		transform: translateY(-50%) scaleY(0);
 		width: 3px;
 		height: 60%;

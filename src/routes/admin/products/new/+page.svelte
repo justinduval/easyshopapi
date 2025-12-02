@@ -531,7 +531,6 @@
 	.btn-primary,
 	.btn-secondary {
 		padding: var(--space-md) var(--space-xl);
-		border: 1px solid transparent;
 		border-radius: var(--radius-md);
 		font-weight: 500;
 		cursor: pointer;

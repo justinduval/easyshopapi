@@ -85,6 +85,7 @@ export async function getSessionUser(event: RequestEvent): Promise<AdminUser | n
 export async function ensureDefaultAdmin(): Promise<void> {
 	const adminEmail = process.env.ADMIN_EMAIL;
 	const adminPassword = process.env.ADMIN_PASSWORD;
+	const adminName = process.env.ADMIN_NAME || 'Administrateur';
 
 	if (!adminEmail || !adminPassword) {
 		console.log('[Auth] No ADMIN_EMAIL/ADMIN_PASSWORD in .env, skipping default admin creation');
@@ -112,7 +113,7 @@ export async function ensureDefaultAdmin(): Promise<void> {
 	await query(
 		`INSERT INTO admin_users (email, password_hash, name, is_system)
 		 VALUES ($1, $2, $3, true)`,
-		[adminEmail, passwordHash, 'Administrateur']
+		[adminEmail, passwordHash, adminName]
 	);
 
 	console.log(`[Auth] Created default admin: ${adminEmail}`);
