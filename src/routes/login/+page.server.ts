@@ -32,31 +32,19 @@ export const actions = {
 		}
 
 		// Verify credentials
-		try {
-			const user = await verifyCredentials(validation.data.email, validation.data.password);
+		const user = await verifyCredentials(validation.data.email, validation.data.password);
 
-			if (!user) {
-				return fail(400, {
-					error: 'Email ou mot de passe incorrect',
-					email: validation.data.email
-				});
-			}
-
-			// Set session cookie
-			setSessionCookie({ cookies } as any, user.id);
-
-			// Redirect to admin dashboard
-			throw redirect(303, '/admin/dashboard');
-		} catch (error) {
-			if (error instanceof Response) {
-				throw error;
-			}
-
-			console.error('Login error:', error);
-			return fail(500, {
-				error: 'Une erreur est survenue. Veuillez réessayer.',
+		if (!user) {
+			return fail(400, {
+				error: 'Email ou mot de passe incorrect',
 				email: validation.data.email
 			});
 		}
+
+		// Set session cookie
+		setSessionCookie({ cookies } as any, user.id);
+
+		// Redirect to admin dashboard
+		redirect(303, '/admin/dashboard');
 	}
 } satisfies Actions;

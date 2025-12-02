@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { enhance } from '$app/forms';
 	import Icon from '$lib/components/Icon.svelte';
 	import type { LayoutData } from './$types';
 
@@ -68,7 +67,7 @@
 					<div class="user-email">{data.user?.email || 'user@example.com'}</div>
 				</div>
 			</div>
-			<form method="POST" action="/admin/logout" use:enhance>
+			<form method="POST" action="/admin/logout">
 				<button type="submit" class="logout-btn">
 					<Icon name="logout" size={18} />
 					<span>Déconnexion</span>
