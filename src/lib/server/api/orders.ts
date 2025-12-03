@@ -337,3 +337,200 @@ export async function getOrderStats() {
 
 	return result.rows[0];
 }
+
+// Schemas for order creation
+export const createOrderItemSchema = z.object({
+	product_id: z.string().uuid(),
+	quantity: z.number().int().positive()
+});
+
+export const createOrderSchema = z.object({
+	customer_email: z.string().email(),
+	customer_name: z.string().min(1),
+	customer_phone: z.string().min(1),
+	pickup_location: z.string().min(1),
+	payment_method: z.enum(['stripe', 'oney']),
+	items: z.array(createOrderItemSchema).min(1)
+});
+
+export type CreateOrderInput = z.infer<typeof createOrderSchema>;
+
+export interface CreateOrderItemInput {
+	product_id: string;
+	product_name: string;
+	product_reference: string;
+	quantity: number;
+	unit_price_ht: number;
+	tva_rate: number;
+}
+
+/**
+ * Generate a unique order number
+ */
+function generateOrderNumber(): string {
+	const date = new Date();
+	const year = date.getFullYear().toString().slice(-2);
+	const month = (date.getMonth() + 1).toString().padStart(2, '0');
+	const day = date.getDate().toString().padStart(2, '0');
+	const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+	return `CMD-${year}${month}${day}-${random}`;
+}
+
+/**
+ * Create a new order with items
+ */
+export async function createOrder(
+	input: Omit<CreateOrderInput, 'items'>,
+	items: CreateOrderItemInput[]
+): Promise<OrderWithItems> {
+	const orderNumber = generateOrderNumber();
+
+	// Calculate totals
+	let totalHt = 0;
+	let totalTva = 0;
+
+	const itemsWithTotals = items.map((item) => {
+		const itemTotalHt = item.unit_price_ht * item.quantity;
+		const itemTotalTva = itemTotalHt * (item.tva_rate / 100);
+		const itemTotalTtc = itemTotalHt + itemTotalTva;
+
+		totalHt += itemTotalHt;
+		totalTva += itemTotalTva;
+
+		return {
+			...item,
+			total_ht: itemTotalHt,
+			total_tva: itemTotalTva,
+			total_ttc: itemTotalTtc
+		};
+	});
+
+	const totalTtc = totalHt + totalTva;
+
+	// Create order
+	const orderResult = await query<Order>(
+		`INSERT INTO orders (
+			order_number, customer_email, customer_name, customer_phone,
+			pickup_location, total_ht, total_tva, total_ttc,
+			payment_method, payment_status, order_status
+		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'pending', 'pending')
+		RETURNING *`,
+		[
+			orderNumber,
+			input.customer_email,
+			input.customer_name,
+			input.customer_phone,
+			input.pickup_location,
+			totalHt,
+			totalTva,
+			totalTtc,
+			input.payment_method
+		]
+	);
+
+	const order = orderResult.rows[0];
+
+	// Create order items
+	const createdItems: OrderItem[] = [];
+	for (const item of itemsWithTotals) {
+		const itemResult = await query<OrderItem>(
+			`INSERT INTO order_items (
+				order_id, product_id, product_name, product_reference,
+				quantity, unit_price_ht, tva_rate, total_ht, total_tva, total_ttc
+			) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+			RETURNING *`,
+			[
+				order.id,
+				item.product_id,
+				item.product_name,
+				item.product_reference,
+				item.quantity,
+				item.unit_price_ht,
+				item.tva_rate,
+				item.total_ht,
+				item.total_tva,
+				item.total_ttc
+			]
+		);
+		createdItems.push(itemResult.rows[0]);
+	}
+
+	return {
+		...order,
+		items: createdItems
+	};
+}
+
+/**
+ * Update Stripe session ID for an order
+ */
+export async function updateStripeSessionId(
+	orderId: string,
+	sessionId: string
+): Promise<Order | null> {
+	const result = await query<Order>(
+		`UPDATE orders
+		 SET stripe_session_id = $1, updated_at = CURRENT_TIMESTAMP
+		 WHERE id = $2
+		 RETURNING *`,
+		[sessionId, orderId]
+	);
+
+	return result.rows[0] || null;
+}
+
+/**
+ * Get order by Stripe session ID
+ */
+export async function getOrderByStripeSessionId(
+	sessionId: string
+): Promise<OrderWithItems | null> {
+	const orderResult = await query<Order>(
+		'SELECT * FROM orders WHERE stripe_session_id = $1',
+		[sessionId]
+	);
+
+	if (orderResult.rows.length === 0) {
+		return null;
+	}
+
+	const itemsResult = await query<OrderItem>(
+		'SELECT * FROM order_items WHERE order_id = $1 ORDER BY product_name',
+		[orderResult.rows[0].id]
+	);
+
+	return {
+		...orderResult.rows[0],
+		items: itemsResult.rows
+	};
+}
+
+/**
+ * Mark order as paid and confirmed
+ */
+export async function markOrderAsPaid(orderId: string): Promise<Order | null> {
+	const result = await query<Order>(
+		`UPDATE orders
+		 SET payment_status = 'paid', order_status = 'confirmed', updated_at = CURRENT_TIMESTAMP
+		 WHERE id = $1 AND payment_status = 'pending'
+		 RETURNING *`,
+		[orderId]
+	);
+
+	return result.rows[0] || null;
+}
+
+/**
+ * Mark order payment as failed
+ */
+export async function markOrderPaymentFailed(orderId: string): Promise<Order | null> {
+	const result = await query<Order>(
+		`UPDATE orders
+		 SET payment_status = 'failed', updated_at = CURRENT_TIMESTAMP
+		 WHERE id = $1
+		 RETURNING *`,
+		[orderId]
+	);
+
+	return result.rows[0] || null;
+}

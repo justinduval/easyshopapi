@@ -245,3 +245,60 @@ export async function getProductsStats(): Promise<{
 
 	return result.rows[0] || { total: 0, published: 0, draft: 0, out_of_stock: 0 };
 }
+
+/**
+ * Get multiple products by IDs
+ */
+export async function getProductsByIds(ids: string[]): Promise<Product[]> {
+	if (ids.length === 0) return [];
+
+	const placeholders = ids.map((_, i) => `$${i + 1}`).join(', ');
+	const result = await query<Product>(
+		`SELECT p.*, c.name as category_name, c.slug as category_slug
+		 FROM products p
+		 LEFT JOIN categories c ON p.category_id = c.id
+		 WHERE p.id IN (${placeholders})`,
+		ids
+	);
+
+	return result.rows;
+}
+
+/**
+ * Decrement stock for a product
+ * Returns the updated product or null if not enough stock
+ */
+export async function decrementStock(
+	productId: string,
+	quantity: number
+): Promise<Product | null> {
+	const result = await query<Product>(
+		`UPDATE products
+		 SET stock_quantity = stock_quantity - $1,
+		     stock_status = CASE
+		       WHEN stock_quantity - $1 <= 0 THEN 'out_of_stock'
+		       ELSE 'available'
+		     END
+		 WHERE id = $2 AND stock_quantity >= $1
+		 RETURNING *`,
+		[quantity, productId]
+	);
+
+	return result.rows[0] || null;
+}
+
+/**
+ * Decrement stock for multiple products (batch operation)
+ * Returns true if all decrements succeeded, false otherwise
+ */
+export async function decrementStockBatch(
+	items: Array<{ product_id: string; quantity: number }>
+): Promise<boolean> {
+	for (const item of items) {
+		const result = await decrementStock(item.product_id, item.quantity);
+		if (!result) {
+			return false;
+		}
+	}
+	return true;
+}

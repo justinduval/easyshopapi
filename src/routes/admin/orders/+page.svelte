@@ -9,19 +9,22 @@
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
-	let expandedOrderId: string | null = $state(null);
 	let loading = $state(false);
 	let deleteConfirm: string | null = $state(null);
-	let statusUpdate: { orderId: string | null; newStatus: string } = $state({
-		orderId: null,
-		newStatus: ''
-	});
 
-	// Filters
-	let filters = $state({ ...data.filters });
+	// Filters - use default values if data.filters is undefined
+	const defaultFilters = {
+		order_status: 'all',
+		payment_status: 'all',
+		payment_method: 'all',
+		search: '',
+		date_from: '',
+		date_to: ''
+	};
+	let filters = $state({ ...defaultFilters, ...(data.filters || {}) });
 
-	function toggleOrderDetails(orderId: string) {
-		expandedOrderId = expandedOrderId === orderId ? null : orderId;
+	function viewOrderDetails(orderId: string) {
+		goto(`/admin/orders/${orderId}`);
 	}
 
 	function applyFilters() {
@@ -210,7 +213,6 @@
 		<table>
 			<thead>
 				<tr>
-					<th style="width: 40px;"></th>
 					<th>N° Commande</th>
 					<th>Client</th>
 					<th>Date</th>
@@ -218,21 +220,12 @@
 					<th>Total TTC</th>
 					<th>Paiement</th>
 					<th>Statut</th>
-					<th>Actions</th>
+					<th style="width: 50px;"></th>
 				</tr>
 			</thead>
 			<tbody>
 				{#each data.orders as order}
-					<tr class:expanded={expandedOrderId === order.id}>
-						<td>
-							<button
-								class="expand-btn"
-								onclick={() => toggleOrderDetails(order.id)}
-								aria-label="Voir détails"
-							>
-								<Icon name={expandedOrderId === order.id ? 'arrow-right' : 'arrow-right'} size={16} />
-							</button>
-						</td>
+					<tr class="order-row" onclick={() => viewOrderDetails(order.id)}>
 						<td data-label="Commande">
 							<strong class="order-number">{order.order_number}</strong>
 						</td>
@@ -264,141 +257,19 @@
 								{getStatusLabel(order.order_status)}
 							</span>
 						</td>
-						<td class="actions">
-							{#if getAvailableStatusTransitions(order.order_status).length > 0}
-								<form
-									method="POST"
-									action="?/updateStatus"
-									use:enhance={() => {
-										loading = true;
-										return async ({ update }) => {
-											await update();
-											loading = false;
-											invalidateAll();
-										};
-									}}
-								>
-									<input type="hidden" name="id" value={order.id} />
-									<select
-										name="order_status"
-										class="status-select"
-										onchange={(e) => e.currentTarget.form?.requestSubmit()}
-										disabled={loading}
-									>
-										<option value={order.order_status}>Changer statut...</option>
-										{#each getAvailableStatusTransitions(order.order_status) as status}
-											<option value={status}>{getStatusLabel(status)}</option>
-										{/each}
-									</select>
-								</form>
-							{/if}
-
-							{#if order.order_status === 'cancelled'}
-								{#if deleteConfirm === order.id}
-									<div class="delete-confirm">
-										<form
-											method="POST"
-											action="?/delete"
-											use:enhance={() => {
-												loading = true;
-												return async ({ update }) => {
-													await update();
-													loading = false;
-													deleteConfirm = null;
-													invalidateAll();
-												};
-											}}
-										>
-											<input type="hidden" name="id" value={order.id} />
-											<button type="submit" class="btn-sm btn-danger" disabled={loading}>
-												Confirmer
-											</button>
-										</form>
-										<button class="btn-sm btn-secondary" onclick={() => (deleteConfirm = null)}>
-											Annuler
-										</button>
-									</div>
-								{:else}
-									<button
-										class="btn-sm btn-danger"
-										onclick={() => (deleteConfirm = order.id)}
-									>
-										Supprimer
-									</button>
-								{/if}
-							{/if}
+						<td class="action-cell">
+							<button
+								class="view-btn"
+								onclick={(e) => { e.stopPropagation(); viewOrderDetails(order.id); }}
+								aria-label="Voir détails"
+							>
+								<Icon name="chevron-right" size={20} />
+							</button>
 						</td>
 					</tr>
-
-					<!-- Expanded Row Details -->
-					{#if expandedOrderId === order.id}
-						<tr class="details-row">
-							<td colspan="9">
-								<div class="order-details">
-									<div class="details-grid">
-										<div class="detail-section">
-											<h3>Informations client</h3>
-											<dl>
-												<dt>Nom</dt>
-												<dd>{order.customer_name}</dd>
-												<dt>Email</dt>
-												<dd>{order.customer_email}</dd>
-												<dt>Téléphone</dt>
-												<dd>{order.customer_phone}</dd>
-												<dt>Point de retrait</dt>
-												<dd>{order.pickup_location}</dd>
-											</dl>
-										</div>
-
-										<div class="detail-section">
-											<h3>Paiement</h3>
-											<dl>
-												<dt>Méthode</dt>
-												<dd>{getPaymentMethodLabel(order.payment_method)}</dd>
-												<dt>Statut</dt>
-												<dd>
-													<span class="badge badge-{getPaymentStatusColor(order.payment_status)}">
-														{getPaymentStatusLabel(order.payment_status)}
-													</span>
-												</dd>
-												{#if order.stripe_session_id}
-													<dt>Stripe Session ID</dt>
-													<dd><code>{order.stripe_session_id}</code></dd>
-												{/if}
-												{#if order.oney_transaction_id}
-													<dt>Oney Transaction ID</dt>
-													<dd><code>{order.oney_transaction_id}</code></dd>
-												{/if}
-											</dl>
-										</div>
-
-										<div class="detail-section">
-											<h3>Totaux</h3>
-											<dl>
-												<dt>Total HT</dt>
-												<dd>{formatCurrency(order.total_ht)}</dd>
-												<dt>TVA</dt>
-												<dd>{formatCurrency(order.total_tva)}</dd>
-												<dt>Total TTC</dt>
-												<dd><strong>{formatCurrency(order.total_ttc)}</strong></dd>
-											</dl>
-										</div>
-									</div>
-
-									<div class="items-section">
-										<h3>Articles commandés ({order.items_count})</h3>
-										<div class="items-note">
-											<Icon name="info" size={16} />
-											<span>Détails des articles disponibles dans la base de données</span>
-										</div>
-									</div>
-								</div>
-							</td>
-						</tr>
-					{/if}
 				{:else}
 					<tr>
-						<td colspan="9" class="empty">Aucune commande</td>
+						<td colspan="8" class="empty">Aucune commande</td>
 					</tr>
 				{/each}
 			</tbody>
@@ -578,15 +449,20 @@
 		color: var(--color-text-primary);
 	}
 
-	tr:hover td {
+	.order-row {
+		cursor: pointer;
+		transition: all var(--transition-fast);
+	}
+
+	.order-row:hover td {
 		background: var(--color-surface-hover);
 	}
 
-	tr.expanded td {
+	.order-row:active td {
 		background: var(--color-bg-elevated);
 	}
 
-	.expand-btn {
+	.view-btn {
 		background: none;
 		border: none;
 		cursor: pointer;
@@ -599,14 +475,13 @@
 		justify-content: center;
 	}
 
-	.expand-btn:hover {
+	.view-btn:hover {
 		background: var(--color-surface-hover);
 		color: var(--color-accent-primary);
 	}
 
-	tr.expanded .expand-btn {
-		color: var(--color-accent-primary);
-		transform: rotate(90deg);
+	.action-cell {
+		text-align: center;
 	}
 
 	.order-number {
@@ -699,111 +574,6 @@
 		color: var(--color-accent-primary);
 	}
 
-	/* Actions */
-	.actions {
-		display: flex;
-		gap: var(--space-sm);
-		align-items: center;
-		flex-wrap: wrap;
-	}
-
-	.status-select {
-		padding: var(--space-xs) var(--space-sm);
-		background: var(--color-surface);
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-sm);
-		font-size: 0.85rem;
-		color: var(--color-text-primary);
-		cursor: pointer;
-		transition: all var(--transition-fast);
-	}
-
-	.status-select:hover {
-		border-color: var(--color-accent-muted);
-	}
-
-	.status-select:focus {
-		outline: none;
-		border-color: var(--color-accent-primary);
-	}
-
-	.delete-confirm {
-		display: flex;
-		gap: var(--space-xs);
-		align-items: center;
-	}
-
-	/* Expanded Details */
-	.details-row td {
-		padding: 0;
-		background: var(--color-bg-elevated) !important;
-	}
-
-	.order-details {
-		padding: var(--space-xl);
-		border-top: 1px solid var(--color-border-subtle);
-	}
-
-	.details-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-		gap: var(--space-xl);
-		margin-bottom: var(--space-xl);
-	}
-
-	.detail-section h3 {
-		margin: 0 0 var(--space-md) 0;
-		font-size: 1rem;
-		font-weight: 600;
-		color: var(--color-text-primary);
-		border-bottom: 1px solid var(--color-border-subtle);
-		padding-bottom: var(--space-sm);
-	}
-
-	.detail-section dl {
-		margin: 0;
-	}
-
-	.detail-section dt {
-		font-size: 0.85rem;
-		color: var(--color-text-tertiary);
-		margin-top: var(--space-sm);
-		margin-bottom: var(--space-xs);
-	}
-
-	.detail-section dd {
-		margin: 0;
-		color: var(--color-text-primary);
-		font-weight: 500;
-	}
-
-	.detail-section code {
-		background: var(--color-surface);
-		padding: var(--space-xs) var(--space-sm);
-		border-radius: var(--radius-sm);
-		font-size: 0.85rem;
-		color: var(--color-accent-primary);
-		font-family: 'Courier New', monospace;
-	}
-
-	.items-section h3 {
-		margin: 0 0 var(--space-md) 0;
-		font-size: 1rem;
-		font-weight: 600;
-		color: var(--color-text-primary);
-	}
-
-	.items-note {
-		display: flex;
-		align-items: center;
-		gap: var(--space-sm);
-		padding: var(--space-md);
-		background: rgba(59, 130, 246, 0.1);
-		border: 1px solid rgba(59, 130, 246, 0.2);
-		border-radius: var(--radius-md);
-		color: var(--color-info);
-		font-size: 0.9rem;
-	}
 
 	/* Pagination */
 	.pagination {
@@ -888,12 +658,6 @@
 		}
 	}
 
-	@media (max-width: 968px) {
-		.details-grid {
-			grid-template-columns: 1fr;
-		}
-	}
-
 	/* ===== RESPONSIVE MOBILE ===== */
 	@media (max-width: 768px) {
 		.page-header {
@@ -959,10 +723,6 @@
 			background: transparent;
 		}
 
-		tr.expanded {
-			border-color: var(--color-accent-primary);
-		}
-
 		td {
 			padding: var(--space-xs) 0;
 			border: none;
@@ -982,27 +742,27 @@
 			margin-right: var(--space-md);
 		}
 
-		/* Hide expand button cell label */
-		td:first-child {
-			position: absolute;
-			top: var(--space-md);
-			right: var(--space-md);
-			padding: 0;
-		}
-
-		td:first-child::before {
-			display: none;
-		}
-
 		/* Order number - make it prominent */
-		td:nth-child(2) {
+		td:first-child {
 			padding-top: 0;
 			padding-bottom: var(--space-sm);
 			border-bottom: 1px solid var(--color-border-subtle);
 			margin-bottom: var(--space-sm);
 		}
 
-		td:nth-child(2)::before {
+		td:first-child::before {
+			display: none;
+		}
+
+		/* Hide action cell on mobile - whole row is clickable */
+		td:last-child {
+			position: absolute;
+			top: var(--space-md);
+			right: var(--space-md);
+			padding: 0;
+		}
+
+		td:last-child::before {
 			display: none;
 		}
 
@@ -1019,73 +779,6 @@
 			font-size: 0.8rem;
 		}
 
-		/* Actions at bottom */
-		td.actions {
-			padding-top: var(--space-md);
-			margin-top: var(--space-sm);
-			border-top: 1px solid var(--color-border-subtle);
-			justify-content: flex-end;
-		}
-
-		td.actions::before {
-			display: none;
-		}
-
-		.actions {
-			width: 100%;
-			justify-content: flex-end;
-		}
-
-		.status-select {
-			flex: 1;
-			max-width: 150px;
-		}
-
-		.delete-confirm {
-			flex-wrap: wrap;
-			justify-content: flex-end;
-		}
-
-		/* Details row */
-		.details-row {
-			margin-top: calc(-1 * var(--space-md));
-			border-top: none;
-			border-top-left-radius: 0;
-			border-top-right-radius: 0;
-		}
-
-		.details-row td {
-			display: block;
-		}
-
-		.details-row td::before {
-			display: none;
-		}
-
-		.order-details {
-			padding: var(--space-md);
-		}
-
-		.details-grid {
-			gap: var(--space-lg);
-		}
-
-		.detail-section h3 {
-			font-size: 0.9rem;
-		}
-
-		.detail-section dt {
-			font-size: 0.8rem;
-		}
-
-		.detail-section dd {
-			font-size: 0.9rem;
-		}
-
-		.items-note {
-			font-size: 0.8rem;
-			padding: var(--space-sm);
-		}
 
 		/* Pagination */
 		.pagination {
@@ -1129,21 +822,6 @@
 
 		.total {
 			font-size: 0.95rem;
-		}
-
-		.btn-sm {
-			padding: var(--space-xs) var(--space-sm);
-			font-size: 0.8rem;
-		}
-
-		.status-select {
-			font-size: 0.8rem;
-			padding: var(--space-xs);
-		}
-
-		.detail-section code {
-			font-size: 0.75rem;
-			word-break: break-all;
 		}
 	}
 </style>
