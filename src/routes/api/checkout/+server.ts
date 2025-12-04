@@ -10,21 +10,36 @@ import { getProductsByIds } from '$lib/server/api/products';
 import { createCheckoutSession } from '$lib/server/stripe';
 import { env as privateEnv } from '$env/dynamic/private';
 
-// CORS headers
-function getCorsHeaders() {
-	const allowedOrigin = privateEnv.ALLOWED_ORIGIN || '*';
+// CORS headers - supporte plusieurs origines séparées par des virgules
+function getCorsHeaders(requestOrigin?: string | null) {
+	const allowedOriginsEnv = privateEnv.ALLOWED_ORIGIN || '*';
+
+	// Si '*' ou pas d'origine spécifiée, autoriser tout
+	if (allowedOriginsEnv === '*' || !requestOrigin) {
+		return {
+			'Access-Control-Allow-Origin': allowedOriginsEnv,
+			'Access-Control-Allow-Methods': 'POST, OPTIONS',
+			'Access-Control-Allow-Headers': 'Content-Type'
+		};
+	}
+
+	// Supporter plusieurs origines séparées par des virgules
+	const allowedOrigins = allowedOriginsEnv.split(',').map(o => o.trim());
+	const isAllowed = allowedOrigins.includes(requestOrigin);
+
 	return {
-		'Access-Control-Allow-Origin': allowedOrigin,
+		'Access-Control-Allow-Origin': isAllowed ? requestOrigin : allowedOrigins[0],
 		'Access-Control-Allow-Methods': 'POST, OPTIONS',
 		'Access-Control-Allow-Headers': 'Content-Type'
 	};
 }
 
 // Handle preflight requests
-export const OPTIONS: RequestHandler = async () => {
+export const OPTIONS: RequestHandler = async ({ request }) => {
+	const origin = request.headers.get('Origin');
 	return new Response(null, {
 		status: 204,
-		headers: getCorsHeaders()
+		headers: getCorsHeaders(origin)
 	});
 };
 
@@ -46,6 +61,8 @@ const checkoutSchema = z.object({
 });
 
 export const POST: RequestHandler = async ({ request }) => {
+	const origin = request.headers.get('Origin');
+
 	try {
 		const body = await request.json();
 
@@ -54,7 +71,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		if (!validation.success) {
 			return json(
 				{ error: 'Données invalides', details: validation.error.flatten() },
-				{ status: 400, headers: getCorsHeaders() }
+				{ status: 400, headers: getCorsHeaders(origin) }
 			);
 		}
 
@@ -115,7 +132,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		}
 
 		if (errors.length > 0) {
-			return json({ error: 'Erreurs de validation', details: errors }, { status: 400, headers: getCorsHeaders() });
+			return json({ error: 'Erreurs de validation', details: errors }, { status: 400, headers: getCorsHeaders(origin) });
 		}
 
 		// Create order in DB (status: pending)
@@ -151,13 +168,13 @@ export const POST: RequestHandler = async ({ request }) => {
 				order_number: order.order_number,
 				checkout_url: session.url
 			},
-			{ headers: getCorsHeaders() }
+			{ headers: getCorsHeaders(origin) }
 		);
 	} catch (error) {
 		console.error('[Checkout] Error:', error);
 		return json(
 			{ error: 'Erreur lors de la création de la commande' },
-			{ status: 500, headers: getCorsHeaders() }
+			{ status: 500, headers: getCorsHeaders(origin) }
 		);
 	}
 };
